@@ -5,7 +5,7 @@ finds all images ^\|\simage.*$ (might want to edit to grab the image name to get
 
 */
 function getResarch() {
-		var info = information("new york");
+		var info = information("Einstien");
 };
 
 var information = function(search) {

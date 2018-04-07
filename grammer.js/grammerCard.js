@@ -1,14 +1,16 @@
+var myTemp = 0; 
 function getGrammer(text)
 {
 	var freq = getWordFrequency(text);  // returns a dictionary of words with the amount of times the word has been said if it is over a threshold. 
 	console.log(JSON.stringify(freq)); 
-	var period = getDistanceBetween(text,".",200); 
-	console.log(JSON.stringify(period)); 
+	myTemp = freq; 
+	//var period = getDistanceBetween(text,".",200); 
+	//console.log(JSON.stringify(period)); 
 };
 
 var getWordFrequency = function(str)
 {
-	
+
 	let blacklist = ["in","the","on"]
 	let lStr = str.toLowerCase(); 
 	let dict = {};
@@ -29,19 +31,44 @@ var getWordFrequency = function(str)
 		
 	};
 	let overflow = 10; 
-	let overDict = {}; 
+	let wordArray = []; 
 	for (var key in dict) {
     // check if the property/key is defined in the object itself, not in parent
     if (dict.hasOwnProperty(key)) {           
 	if(dict[key] != null && dict[key] >= overflow)
 	{
-		overDict[key] = dict[key]; 
+		//console.log("run"); 
+		let overFlowWord = {
+			word: key, 
+			amount: dict[key],
+			synonyms: []
+		
+		}; 
+		
+		var hello = $.getJSON('http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process').done(function(response){
+			//console.log(response + " done"); 	
+		}).fail(function(response){
+			let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
+			console.log("word: " + overFlowWord.word);
+			console.log(ob.response.length);
+			for(let i = 0; i<ob.response.length; i++ )
+			{
+				console.log(ob.response[i]); 
+				overFlowWord.synonyms.push(ob.response[i].list.synonyms); ; 
+				
+			}
+			console.log(overFlowWord.synonyms); 
+		
+		}); 
+	wordArray.push(overFlowWord); 
 	}	
     }
+	
+	
 }
 	
 	
-	return overDict; 
+	return wordArray; 
 	
 };
 
@@ -75,4 +102,5 @@ var getDistanceBetween = function (iStr,item,threshold)
 	
 	return distanceBetween
 }
-
+//Get synonyms
+//http://thesaurus.altervista.org/thesaurus/v1?word=peace&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process
