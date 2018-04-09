@@ -5,7 +5,10 @@ finds all images ^\|\simage.*$ (might want to edit to grab the image name to get
 
 */
 function getResarch() {
-		var info = information("Einstien");
+		var info = information("New York");
+		//let a = '<a href="/wiki/Thanos" title="Thanos">Thanos</a>'.replace(/"\/wiki\/(\w*)"/g,'"https://en.wikipedia.org/wiki/$1'); 
+		//console.log(a); 
+
 };
 
 var information = function(search) {
@@ -83,8 +86,8 @@ var information = function(search) {
 var addHttps = function(html)	
 {
 	var string = html.replace(/\/\/upload/g,'https://upload'); 
-	
-	return string; 
+	string = string.replace(/"\/wiki\/(\w*)"/g,'"https://en.wikipedia.org/wiki/$1"'); 
+	return string;
 	
 }
 

@@ -45,22 +45,23 @@ var getWordFrequency = function(str)
 		
 		}; 
 		
-		var hello = $.getJSON('http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process').done(function(response){
+	    $.getJSON('http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process').done(function(response){
 			//console.log(response + " done"); 	
 		}).fail(function(response){
 			let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
-			console.log("word: " + overFlowWord.word);
-			console.log(ob.response.length);
+			//console.log("word: " + overFlowWord.word);
+			//console.log(ob.response.length);
 			for(let i = 0; i<ob.response.length; i++ )
 			{
-				console.log(ob.response[i]); 
+				//console.log(ob.response[i]); 
 				overFlowWord.synonyms.push(ob.response[i].list.synonyms); ; 
 				
 			}
-			console.log(overFlowWord.synonyms); 
-		
+			//console.log(overFlowWord); 
+		wordArray.push(overFlowWord);
+		return wordArray; 
 		}); 
-	wordArray.push(overFlowWord); 
+	 
 	}	
     }
 	
@@ -68,7 +69,7 @@ var getWordFrequency = function(str)
 }
 	
 	
-	return wordArray; 
+	
 	
 };
 
@@ -83,7 +84,7 @@ var getDistanceBetween = function (iStr,item,threshold)
 	let end = 0; 
 	while(end < str.length || end == null){
 		end = str.indexOf(item); 
-		console.log(end); 
+		//console.log(end); 
 			if(end != null && end >= threshold)
 			{
 				if(distanceBetween[distanceBetween.length-1] != null){
@@ -97,7 +98,7 @@ var getDistanceBetween = function (iStr,item,threshold)
 		
 	}
 		
-	console.log(distanceBetween); 
+	//console.log(distanceBetween); 
 	
 	
 	return distanceBetween
