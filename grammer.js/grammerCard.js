@@ -1,9 +1,7 @@
-var myTemp = 0; 
 function getGrammer(text)
 {
 	var freq = getWordFrequency(text);  // returns a dictionary of words with the amount of times the word has been said if it is over a threshold. 
-	console.log(JSON.stringify(freq)); 
-	myTemp = freq; 
+	console.log(freq); 
 	//var period = getDistanceBetween(text,".",200); 
 	//console.log(JSON.stringify(period)); 
 };
@@ -11,7 +9,7 @@ function getGrammer(text)
 var getWordFrequency = function(str)
 {
 
-	let blacklist = ["in","the","on"]
+	let blacklist = ["in","the","on","if","a","i"]; // add more to this 
 	let lStr = str.toLowerCase(); 
 	let dict = {};
 	let regex = /\b[a-zA-Z]+'?[a-zA-Z]?\b/g;
@@ -45,12 +43,23 @@ var getWordFrequency = function(str)
 		
 		}; 
 		
-	    $.getJSON('http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process').done(function(response){
-			//console.log(response + " done"); 	
-		}).fail(function(response){
-			let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
-			//console.log("word: " + overFlowWord.word);
-			//console.log(ob.response.length);
+		
+		 $.ajax({
+            headers: {
+                'Content-Type': "application/json",
+                'Access-Control-Allow-Origin': "*"
+            },
+            method: "GET",
+            dataType: "jsonp",
+			//url: 'https://en.wikipedia.org/api/rest_v1/page/html/' + title
+            url: 'http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process',
+			async: false
+        }).done(function(response) {
+			//console.log(response); 
+			let ob = response; 
+			//let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
+		    //console.log("word: " + overFlowWord.word);
+		    //console.log(ob.response.length);
 			for(let i = 0; i<ob.response.length; i++ )
 			{
 				//console.log(ob.response[i]); 
@@ -59,16 +68,17 @@ var getWordFrequency = function(str)
 			}
 			//console.log(overFlowWord); 
 		wordArray.push(overFlowWord);
-		return wordArray; 
-		}); 
+		//console.log(wordArray); 
+		
+		});
+		
 	 
 	}	
     }
 	
 	
 }
-	
-	
+	return wordArray; 	
 	
 	
 };

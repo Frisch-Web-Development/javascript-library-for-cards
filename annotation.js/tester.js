@@ -1,6 +1,6 @@
 
 
 $(document).ready(function() {	
-  getResarch("New York"); 
+  getAnnotations(); 
   
 });

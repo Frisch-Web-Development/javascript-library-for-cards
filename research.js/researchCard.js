@@ -4,10 +4,12 @@ get infobox: {{Infobox\s(.+)\s (get group 1)
 finds all images ^\|\simage.*$ (might want to edit to grab the image name to get the image) 
 
 */
-function getResarch() {
-		var info = information("New York");
+var myTemp = 0; 
+function getResarch(str) {
+		var info = information("New York City");
 		//let a = '<a href="/wiki/Thanos" title="Thanos">Thanos</a>'.replace(/"\/wiki\/(\w*)"/g,'"https://en.wikipedia.org/wiki/$1'); 
-		//console.log(a); 
+		console.log(info); 
+		myTemp = info; 
 
 };
 
@@ -22,9 +24,10 @@ var information = function(search) {
         },
         method: "GET",
         dataType: "jsonp",
+		async: false, 
         url: 'https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=' + encodeURIComponent(search)
     }).done(function(result) {
-        console.log(result); 
+       // console.log(result); 
 		possibleTitles = result[1]
         title = determineTitle(search, possibleTitles);
 
@@ -34,14 +37,15 @@ var information = function(search) {
                 'Access-Control-Allow-Origin': "*"
             },
             method: "GET",
+			async: false, 
             dataType: "jsonp",
 			//url: 'https://en.wikipedia.org/api/rest_v1/page/html/' + title
             url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvlimit=1&format=json&rvprop=content&rvparse=&titles=' + title
         }).done(function(result) {
-            console.log(Object.keys(result.query.pages)[0]); 
+           // console.log(Object.keys(result.query.pages)[0]); 
             stuff = result.query.pages[Object.keys(result.query.pages)[0]].revisions["0"]["*"];
-			console.log(stuff);
-            console.log(stuff.indexOf('<div class="redirectMsg">')); 
+			//console.log(stuff);
+            //console.log(stuff.indexOf('<div class="redirectMsg">')); 
 
             if (stuff.indexOf('<div class="redirectMsg">')!= -1) {
 				let regex = /title="((\w|\s)*)/;
@@ -57,6 +61,7 @@ var information = function(search) {
 			//console.log($("table.infobox").html());
 			if($("table.infobox").html() != null){
 			$("#wikiInfo").html($("table.infobox").html());
+			console.log("hello"); 
 			}
 			else{
 			$("#wikiInfo").html("No infoBox available"); 
@@ -64,13 +69,14 @@ var information = function(search) {
 			
 			}
 			 
-            return stuff;
+            
 		}
 
 
         });
     });
-	
+	console.log("stuff and things"); 
+	return ($("table.infobox").html());
 	
 
 	//https://en.wikipedia.org/api/rest_v1/page/html/ //this one I can't get working
@@ -133,7 +139,7 @@ var determineTitle = function(original,array)
 	for(let i = 0; i<array.length; i++)
 	{
 		let string = array[i];
-		console.log(string);
+		//console.log(string);
 		let num = levenshteinDistance(original,string); 
 		if(num < min)
 		{
@@ -141,7 +147,7 @@ var determineTitle = function(original,array)
 			term = string; 
 		}
 	}
-	console.log("term: "+term);
+	//console.log("term: "+term);
 	return term; 
 		
 }
