@@ -105,8 +105,7 @@ $(document).ready(function(){
 	[{"color": []}, {"background": []}], 
 	['link','video','formula','image'],
 	[{'align':[]}],
-	[{'indent': '+1'}, {'indent': '-1'}	],
-	['annotation']
+	[{'indent': '+1'}, {'indent': '-1'}	]
 	];
 	
 	quill = new Quill('#editor', 	{
@@ -116,22 +115,37 @@ $(document).ready(function(){
 			}, 
 		theme: "snow"
 	});
+	var Parchment = Quill.import("parchment");
+
+	let CustomClass = new Parchment.Attributor.Class('annotation', 'tooltip', {
+	scope: Parchment.Scope.INLINE
+	});
+
+	Quill.register(CustomClass, true);
+//	$("button.ql-annotation").append('<svg viewBox="0 0 18 18"> <text font-size="15" font-family="Verdana" x="0" y="11"> @</text></svg>');
 	
-	$("button.ql-annotation").append('<svg viewBox="0 0 18 18"> <text font-size="15" font-family="Verdana" x="0" y="11"> @</text></svg>');
 	
-	
-	
+	var finalBool = false; 
 	quill.on('selection-change', function(range, oldRange, source) {
 	if (range) {
 		if (range.length != 0) {
-			$("button.ql-annotation").click(function(){
-			var text = quill.getText(range.index, range.length);
-			console.log('User has highlighted', text); 
-			$(".ql-tooltip").attr("data-mode", "annotation");
-			$(".ql-tooltip").removeClass('.ql-hidden').addClass('.ql-editing');
-			//$(".ql-tooltip").addClass('ql-editing');
-			//$(".q1-tooltip").attr("class", "q1-tooltip ql-editing");
-			//Tooltip.show(); 
+			finalBool = true; 
+			//console.log('User has highlighted', content);
+			console.log('range' ,range.index); 
+			$("button#annotation").click(function(){
+			let content = quill.getText(range.index, range.length);
+			console.log('User has highlighted', content); 
+			console.log('Index', range.index); 
+			console.log(source); 
+			let name = $('input#annotation').val(); 
+			console.log('Name =', name ); 
+			
+			if(!(name == null || name == "" || name == " ") && finalBool )
+			{
+				console.log("run"); 
+				addAnnotation(name,content,range.index,false,quill.getContents()); 
+				finalBool = false; 
+			}
 			}); 
 		} 
 	} 
@@ -144,9 +158,9 @@ $(document).ready(function(){
 	//$("#editor").keypress(function(){
 	quill.on('text-change',function(){
 		letters++; 
-//		timer();
+//		timer(); 
 		clearInterval(myTimer); 
-		checkAnnotation(quill.getText()); 
+		checkAnnotation(quill.getText(),quill.getContents()); 
 	});	
 	function timer()  {
 		if(letters > 0) 
@@ -181,3 +195,9 @@ $(document).ready(function(){
 	}
 	
 });
+
+
+function setContent(input)
+{
+	quill.setContents(input); 
+};
