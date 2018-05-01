@@ -101,13 +101,12 @@ var findIndex = function(stuff,holder)
 			length += stuff.ops[i].insert.length
 			index = i; 
 		}
-		else if(typeof stuff.ops[i].insert != 'string')
-		{
+		else if(typeof stuff.ops[i].insert != 'string'){
 			console.log("run if 2",i); 
 			length++; 
 			index = i; 
 		}
-		else{
+		else {
 			console.log("run if 3",i); 
 			index = i; 
 			i= stuff.ops.length+1; 
@@ -118,4 +117,3 @@ var findIndex = function(stuff,holder)
 	console.log(holder.index); 
 	return {index: index, holder: holder}; 
 }; 
-

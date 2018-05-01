@@ -124,32 +124,38 @@ $(document).ready(function(){
 	Quill.register(CustomClass, true);
 //	$("button.ql-annotation").append('<svg viewBox="0 0 18 18"> <text font-size="15" font-family="Verdana" x="0" y="11"> @</text></svg>');
 	
-	
+	var content; 
+	var Range; 
 	var finalBool = false; 
 	quill.on('selection-change', function(range, oldRange, source) {
 	if (range) {
 		if (range.length != 0) {
 			finalBool = true; 
-			//console.log('User has highlighted', content);
+			content = quill.getText(range.index, range.length);
+			Range = range.index;  
+			console.log('User has highlighted1', content);
+			console.log(range); 
 			console.log('range' ,range.index); 
-			$("button#annotation").click(function(){
-			let content = quill.getText(range.index, range.length);
-			console.log('User has highlighted', content); 
-			console.log('Index', range.index); 
-			console.log(source); 
+			
+		} 
+	} 
+	});
+	
+	$("button#annotation").click(function(){
+		
+			console.log('User has highlighted2', content); 
+		//	console.log(range); 
+		//	console.log(source); 
 			let name = $('input#annotation').val(); 
 			console.log('Name =', name ); 
 			
 			if(!(name == null || name == "" || name == " ") && finalBool )
 			{
 				console.log("run"); 
-				addAnnotation(name,content,range.index,false,quill.getContents()); 
+				addAnnotation(name,content,Range,false,quill.getContents()); 
 				finalBool = false; 
 			}
 			}); 
-		} 
-	} 
-	});
 	
 	
 	var myTimer = setInterval(timer, 100);
