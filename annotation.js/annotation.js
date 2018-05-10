@@ -1,11 +1,11 @@
+var G = 0; 
 function checkAnnotation(str,full){
 	let rawMatch = str.match(/@\w*{.*}/g);
 	if(rawMatch != null){
 	for(let i = 0; i<rawMatch.length; i++)
 	{
 		addAnnotation(rawMatch[i].replace(/@(\w+){.*}/,"$1"),rawMatch[i].replace(/@\w+{(.*)}/,"$1"),str.indexOf(rawMatch[i]),true,full); 
-	}
-	}
+	}}
 
 };
 function addAnnotation(_name, _content,_index,bool,full)
@@ -15,8 +15,9 @@ function addAnnotation(_name, _content,_index,bool,full)
 		content: _content,
 		index: _index
 	};
-	console.log(holder); 
-		configureText(holder,full,bool); 
+	console.log(_content); 
+	if(_content != null && _content != ""){	
+	configureText(holder,full,bool); }
 };
 
 
@@ -34,12 +35,7 @@ function configureText(holder,full,bool)
 		{
 			if(stuff.ops[i].insert.indexOf('@' + holder.name + '{' + holder.content + '}') != -1){
 			console.log(stuff.ops[i].insert); 
-			let initalString = stuff.ops[i].insert; 
-			/*stuff.ops[i].insert = initalString.substring(0,holder.index); 
-			stuff.ops.splice(i+1,0,{attributes: {annotation: true}, insert:initalString.substring(holder.index+2+holder.name.length,holder.index+2+holder.name.length+holder.content.length) }); 
-			stuff.ops.splice(i+2,0,{insert: " " + initalString.substring(holder.index+3+holder.name.length+holder.content.length,initalString.length)}); 
-			console.log(stuff); 
-			//addModel(holder,stuff);*/
+			let initalString = stuff.ops[i].insert; 	
 			let one = initalString.match(/(.*)@\w+{.*}/s);
 			//console.log(one[1]); 
 			let two = initalString.match(/@\w+{(.*)}/s)
@@ -47,22 +43,11 @@ function configureText(holder,full,bool)
 			let three = " " + initalString.substring(initalString.indexOf("{" + two[1] + "}") + two[1].length+2, initalString.length); 
 			//console.log(three); 
 			stuff.ops[i].insert = one[1]; 
-			stuff.ops.splice(i+1,0, {attributes: {annotation: true}, insert:two[1]}); 
+			stuff.ops.splice(i+1,0, {attributes: {annotation: true,name:holder.name}, insert:two[1]});  //TODO make it work with other attributes//
 			stuff.ops.splice(i+2,0, {insert:three}); 
 			//console.log(stuff); 
-			setContent(stuff); 
-			
-			
-			$(".tooltip-" + true).tooltip();
-			$(".tooltip-" + true).attr('title',holder.name); 
-			}
-			else {
-				
-			}
-			
-			
-			 
-			
+			setContent(stuff); 	
+			} 
 		}
 	}}
 	else{
@@ -70,18 +55,12 @@ function configureText(holder,full,bool)
 		let i = I.index; 
 		holder = I.holder; 
 		console.log("run3"); 
-				let initalString = stuff.ops[i].insert; 
-				let one = initalString.substring(0,holder.index); 
-				let two = holder.content; 
-				let three = initalString.substring(holder.index+holder.content.length); 
-				stuff.ops[i].insert = one; 
-				stuff.ops.splice(i+1,0, {attributes: {annotation: true}, insert:two}); 
-				stuff.ops.splice(i+2,0, {insert:three});
-				setContent(stuff); 
-			
-			
-			$(".tooltip-" + true).tooltip();
-			$(".tooltip-" + true).attr('title',holder.name);  
+		let initalString = stuff.ops[i].insert; 
+		let string = initalString.substring(0,holder.index)+ "@" + holder.name + "{" + holder.content + "}" + initalString.substring(holder.index+holder.content.length,initalString.length); 
+		stuff.ops[i].insert = string; 
+		console.log(string); 
+		console.log(stuff); 
+		configureText(holder, stuff,true); 	
 	}
 	
 	
@@ -117,3 +96,67 @@ var findIndex = function(stuff,holder)
 	console.log(holder.index); 
 	return {index: index, holder: holder}; 
 }; 
+
+
+function renderTooltip()
+{
+	let myDiv = $(".tool-true")
+			myDiv.each(function(index){
+				let classes = $(this).attr('class').split(' '); 
+				let name = classes[1].substring(classes[1].indexOf("name-")+5,classes[1].length); 
+				console.log(name); 
+				$(this).attr('title',name); 
+			}); 	
+			$(".tool-true").tooltipster({theme: 'tooltipster-noir'});
+	updateAnnotationList(); 		
+	
+}; 
+var getTooltips = function()
+{
+	var array = []; 
+	$(".tool-true").each(function(index){
+		array.push({JQuery: $(this), name: $(this).attr('class').split(' ')[1].substring($(this).attr('class').split(' ')[1].indexOf("name-")+5), content:$(this).html()}); 
+	});
+	return array; 	
+	
+}
+
+
+var listOfNames = function () 
+{
+	var tooltips = getTooltips(); 
+	var names = []; 
+	for(let i = 0; i<tooltips.length; i++)
+	{
+		if(!names.includes(tooltips[i].name)){
+		names.push({name: tooltips[i].name, contents: [tooltips[i].content]}); 
+		}
+		else{
+			for(let j = 0; j<names.length; j++)
+			{
+				if(names[j].name == tooltip[i].name)
+				{
+					names[j].contents.push(tooltip[i].content); 
+				}
+			}
+		}
+	}
+	return names; 
+}
+
+function updateAnnotationList()
+{
+	var names = listOfNames(); 
+	var tooltip = getTooltips(); 
+	var myDiv = $("ul#annotation"); 
+	myDiv.html(""); 
+	for(let i = 0; i<names.length; i++)
+	{
+		myDiv.append("<h4>" + names[i].name + "</h4> <ul>");
+		for(let j = 0; j<names[i].contents.length; j++)
+		{
+			myDiv.append("<li>" +names[i].contents[j] + "</li>");  
+		}
+		myDiv.append("</ul"); 
+	}
+}

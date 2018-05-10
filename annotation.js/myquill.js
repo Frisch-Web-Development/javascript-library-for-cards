@@ -47,9 +47,7 @@ function onSignIn(googleUser) {
     	}).done(function(data) {
     			console.log(data + " data");
     			blob = JSON.parse(data);
-    			quill.setContents(
-    				  blob
-    				);
+    			setContent(blob); 
     			
     });
     	// load file here
@@ -79,7 +77,8 @@ function onSignIn(googleUser) {
 */
 
 $(document).ready(function(){
-	
+
+			
 	
 	$('body').on('click', '[data-editable]', function(){
 		  
@@ -117,11 +116,15 @@ $(document).ready(function(){
 	});
 	var Parchment = Quill.import("parchment");
 
-	let CustomClass = new Parchment.Attributor.Class('annotation', 'tooltip', {
+	let CustomClass = new Parchment.Attributor.Class('annotation', 'tool', {
+	scope: Parchment.Scope.INLINE
+	});
+	let CustomClass2 = new Parchment.Attributor.Class('name', 'name', {
 	scope: Parchment.Scope.INLINE
 	});
 
 	Quill.register(CustomClass, true);
+	Quill.register(CustomClass2, true);
 //	$("button.ql-annotation").append('<svg viewBox="0 0 18 18"> <text font-size="15" font-family="Verdana" x="0" y="11"> @</text></svg>');
 	
 	var content; 
@@ -206,4 +209,5 @@ $(document).ready(function(){
 function setContent(input)
 {
 	quill.setContents(input); 
+	renderTooltip(); 
 };
