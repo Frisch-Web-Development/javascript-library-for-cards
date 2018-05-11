@@ -1,16 +1,50 @@
-function getMath(id, equasion)
+var doneList = []; 
+
+var findMath = function(quill)
 {
-	//var math = require('mathjs');
-	var elt = document.getElementById(id);
-	var calculator = Desmos.GraphingCalculator(elt,{exspression: true, settingsMenu: false, expressionsTopbar: false,expressionsCollapsed: true } );
-	calculator.setExpression({id:'graph1', latex:equasion});
-	$(".dcg-show-expressions-tab").remove();
-	getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+are+zeroes+of+function+","X Intercept(s): ",equasion,id);
-	getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+are+y+intercepts+of+function+","Y Intercept(s): ",equasion,id);
-	getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+is+the+maximum+of+","maximum(s) ",equasion,id);
+	let equasion = ""; 
+	let mathInfo = []; 
+	for(let i = 0; i<quill.ops.length; i++)
+	{
+		if(quill.ops[i].insert.hasOwnProperty("formula"))
+		{
+			 
+			equasion = quill.ops[i].insert.formula; 
+			let bool = true; 
+			for(let j = 0; j<doneList.length; j++)
+			{
+				if(doneList[j] == equasion)
+				{
+					bool = false; 
+				}
+			}
+			if(bool)
+			{
+			
+				doneList.push(equasion); 
+				mathInfo.push(getMath(equasion)); 
+			}
+			
+		}
+	}
+	return mathInfo; 
+
+	
 };
 
-function getStuff(stuff,what,equasion,id)
+
+
+var getMath = function (eq)
+{
+	var zeros = getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+are+zeroes+of+function+",eq);
+	var Y = getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+are+y+intercepts+of+function+",eq);
+	var max = getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+is+the+maximum+of+",eq);
+	var min = getStuff("http://api.wolframalpha.com/v2/query?appid=YRVH38-J3JRL4T888&input=what+is+the+minimum+of+",eq);
+	console.log({zero: zeros,yIntercept: Y,maximum: max,minimum:min }); 
+	return {equasion: eq, zero: zeros,yIntercept: Y,maximum: max,minimum:min };
+};
+
+var getStuff = function (stuff,equasion)
 {
 	var zero = []; 
 	$.ajax({headers: {
@@ -20,14 +54,14 @@ function getStuff(stuff,what,equasion,id)
 			method: "GET",
 			dataType: "jsonp",
             url: ""+stuff + encodeURIComponent(equasion) + "&output=json"}).done(function(result) {
-				console.log(result.queryresult); 
-				$("#" + id).append(what)
+				//console.log(result.queryresult); 
 				for(let i = 0; i<result.queryresult.pods[1].subpods.length; i++)
 				{
 					zero[i] = result.queryresult.pods[1].subpods[i].plaintext;
-					$("#" + id).append(""+(i+1)+". "+ zero[i] + "\n"); 
 					
 					
 				}
+				
     });
+	return zero;
 }

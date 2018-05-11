@@ -1,9 +1,15 @@
-function getGrammer(text)
+
+
+var getGrammer = function (text)
 {
 	var freq = getWordFrequency(text);  // returns a dictionary of words with the amount of times the word has been said if it is over a threshold. 
-	console.log(freq); 
-	//var period = getDistanceBetween(text,".",200); 
-	//console.log(JSON.stringify(period)); 
+	var period = getDistanceBetween(text,".",200); 
+	var comma = getDistanceBetween(text,",",400); 
+	
+	console.log({overflowWords: freq, underflowPeriod: period, underflowComma: comma}); 
+	return {overflowWords: freq, underflowPeriod: period, underflowComma: comma}; 
+	
+
 };
 
 var getWordFrequency = function(str)
@@ -18,7 +24,7 @@ var getWordFrequency = function(str)
 	for(let i = 0; i<array.length; i++)
 	{
 		let word = array[i];
-		//console.log(word); 
+		console.log(word); 
 		if(dict[word] == null && !(blacklist.includes(word)))
 		{
 			dict[word] = 1; 
@@ -28,14 +34,14 @@ var getWordFrequency = function(str)
 		}
 		
 	};
-	let overflow = 10; 
+	let overflow = 15; 
 	let wordArray = []; 
 	for (var key in dict) {
     // check if the property/key is defined in the object itself, not in parent
     if (dict.hasOwnProperty(key)) {           
 	if(dict[key] != null && dict[key] >= overflow)
 	{
-		//console.log("run"); 
+		console.log("run"); 
 		let overFlowWord = {
 			word: key, 
 			amount: dict[key],
@@ -55,20 +61,20 @@ var getWordFrequency = function(str)
             url: 'http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process',
 			async: false
         }).done(function(response) {
-			//console.log(response); 
+			console.log(response); 
 			let ob = response; 
 			//let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
-		    //console.log("word: " + overFlowWord.word);
-		    //console.log(ob.response.length);
+		    console.log("word: " + overFlowWord.word);
+		    console.log(ob.response.length);
 			for(let i = 0; i<ob.response.length; i++ )
 			{
-				//console.log(ob.response[i]); 
+				console.log(ob.response[i]); 
 				overFlowWord.synonyms.push(ob.response[i].list.synonyms); ; 
 				
 			}
-			//console.log(overFlowWord); 
+			console.log(overFlowWord); 
 		wordArray.push(overFlowWord);
-		//console.log(wordArray); 
+		console.log(wordArray); 
 		
 		});
 		
@@ -92,10 +98,11 @@ var getDistanceBetween = function (iStr,item,threshold)
 //	let threshold = 200; 	
 	let begin = 0; 
 	let end = 0; 
-	while(end < str.length || end == null){
+	console.log(str.length); 
+	while((end != -1) && end < str.length || end == null){
 		end = str.indexOf(item); 
-		//console.log(end); 
-			if(end != null && end >= threshold)
+		console.log(end); 
+			if(end != -1 && end >= threshold)
 			{
 				if(distanceBetween[distanceBetween.length-1] != null){
 				distanceBetween.push(end+distanceBetween[distanceBetween.length-1]+1);}
