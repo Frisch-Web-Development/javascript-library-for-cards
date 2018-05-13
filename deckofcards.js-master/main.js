@@ -1,3 +1,4 @@
+var T = ""; 
 function checkCards(contents, text,id){
 	let maths = findMath(contents); 
 	for(let i = 0; i<maths.length; i++)
@@ -9,12 +10,14 @@ function checkCards(contents, text,id){
 	
 	let grammer = getGrammer(text); 
 	console.log(grammer); 
+	updateGrammer(grammer,id); 
 	
 	
 	
 }
 
 function addCard(type,title,image,text,id){
+	console.log("run");
 	var html = '<div class ="' + type + '" ><h4 class = "title full clickable">' + type.substring(0,1).toUpperCase() + type.substring(1) + '</h4> <h2 class = "title full clickable">' + title + '</h2>';
 	
 	if(type == "grammer")
@@ -59,6 +62,55 @@ function handler(){
 		$(this).parent().children().toggleClass("full"); 
 		$(this).parent().children().toggleClass("small"); 
 }
+
+
+function updateGrammer(grammer,id)
+{	
+	let bool = true; 
+	console.log("hello?",bool); 
+	console.log(grammer.overflowWords)
+	console.log("len = " + grammer.overflowWords.length ); 
+	if(grammer.overflowWords.length > 0){console.log(grammer.overflowWords[0].word)};
+	$(".grammer").each(function(index){
+		bool = false; 
+		console.log("ran?"); 
+	for(let i = 0; i<grammer.overflowWords.length; i++)
+	{
+		if(grammer.overflowWords[i].word + " synonyms" == $(this).find("h2.title").val())
+		{
+			$(this).find(".text").val(synonymTextBuilder(grammer.overflowWords[i]));
+			
+		}
+		else{
+			
+			addCard("grammer",grammer.overflowWords[i].word + " synonyms",'https://www.geddesandgrosset.com/products/13-large.jpg',synonymTextBuilder(grammer.overflowWords[i]),id);
+		}
+		
+	}})
+	console.log("hi?",bool); 
+	if(bool)
+	{
+		console.log("bool",bool);
+		for(let i = 0; i<grammer.overflowWords.length; i++)
+		{
+			addCard("grammer",grammer.overflowWords[i].word + " synonyms",'https://www.geddesandgrosset.com/products/13-large.jpg',synonymTextBuilder(grammer.overflowWords[i]),id);
+		}
+		
+	}
+	
+	for(let i = 0; i<grammer.underflowComma.length; i++)
+	{
+		//grammer.underflowComma[i]
+		
+	}
+		
+};
+
+var synonymTextBuilder = function(grammer){
+	let synonums = grammer.synonyms[0].split("|"); 
+	let string = "You've used ths world " + grammer.amount + " times try using " + synonums[0] + ", " + synonums[1] + ", and " + synonums[2]; 
+	return string; 
+};
 
 	
 	

@@ -1,4 +1,4 @@
-
+var globalGrammer; 
 
 var getGrammer = function (text)
 {
@@ -6,8 +6,9 @@ var getGrammer = function (text)
 	var period = getDistanceBetween(text,".",200); 
 	var comma = getDistanceBetween(text,",",400); 
 	
-	console.log({overflowWords: freq, underflowPeriod: period, underflowComma: comma}); 
-	return {overflowWords: freq, underflowPeriod: period, underflowComma: comma}; 
+	globalGrammer = {overflowWords: freq, underflowPeriod: period, underflowComma: comma}; 
+	console.log(globalGrammer);
+	return globalGrammer; 
 	
 
 };
@@ -20,11 +21,13 @@ var getWordFrequency = function(str)
 	let dict = {};
 	let regex = /\b[a-zA-Z]+'?[a-zA-Z]?\b/g;
 	let array = lStr.match(regex); 
-
+	if(array == null){return null;}
+	var lastWorld = "";
+	var currentKey = ""; 
 	for(let i = 0; i<array.length; i++)
 	{
 		let word = array[i];
-		console.log(word); 
+		////console.log(word); 
 		if(dict[word] == null && !(blacklist.includes(word)))
 		{
 			dict[word] = 1; 
@@ -32,16 +35,18 @@ var getWordFrequency = function(str)
 		else {
 			dict[word] ++; 
 		}
-		
+		lastWorld = word; 
 	};
 	let overflow = 15; 
 	let wordArray = []; 
 	for (var key in dict) {
+		currentKey = key; 
     // check if the property/key is defined in the object itself, not in parent
     if (dict.hasOwnProperty(key)) {           
 	if(dict[key] != null && dict[key] >= overflow)
 	{
-		console.log("run"); 
+		
+		//console.log("run"); 
 		let overFlowWord = {
 			word: key, 
 			amount: dict[key],
@@ -58,24 +63,23 @@ var getWordFrequency = function(str)
             method: "GET",
             dataType: "jsonp",
 			//url: 'https://en.wikipedia.org/api/rest_v1/page/html/' + title
-            url: 'http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process',
-			async: false
+            url: 'http://thesaurus.altervista.org/thesaurus/v1?word=' + encodeURIComponent(overFlowWord.word) + '&language=en_US&output=json&key=HbqgolDXeWZPbmdMbwKF&callback=process'
         }).done(function(response) {
-			console.log(response); 
+			//console.log(response); 
 			let ob = response; 
 			//let ob = JSON.parse(response.responseText.substring(8,response.responseText.length-1)); 
-		    console.log("word: " + overFlowWord.word);
-		    console.log(ob.response.length);
+		    //console.log("word: " + overFlowWord.word);
+		    //console.log(ob.response.length);
 			for(let i = 0; i<ob.response.length; i++ )
 			{
-				console.log(ob.response[i]); 
+				//console.log(ob.response[i]); 
 				overFlowWord.synonyms.push(ob.response[i].list.synonyms); ; 
 				
 			}
-			console.log(overFlowWord); 
+			//console.log(overFlowWord); 
 		wordArray.push(overFlowWord);
-		console.log(wordArray); 
-		
+		//console.log(wordArray); 
+		 	
 		});
 		
 	 
@@ -84,7 +88,9 @@ var getWordFrequency = function(str)
 	
 	
 }
-	return wordArray; 	
+//while(currentKey != lastWorld){} 
+return wordArray;
+	
 	
 	
 };
@@ -114,8 +120,13 @@ var getDistanceBetween = function (iStr,item,threshold)
 			str = str.substring(begin+1,str.length); 
 		
 	}
+	if(end == -1 && str.length > threshold)
+	{
 		
-	//console.log(distanceBetween); 
+		
+	}
+		
+	console.log(distanceBetween); 
 	
 	
 	return distanceBetween
