@@ -1,16 +1,34 @@
-var T = ""; 
+//$(document).ready(function(){addCard("grammer","fuck",'https://www.geddesandgrosset.com/products/13-large.jpg','kh',"cards");addCard("grammer","duck",'https://www.geddesandgrosset.com/products/13-large.jpg','kh',"cards");});
 function checkCards(contents, text,id){
 	let maths = findMath(contents); 
-	for(let i = 0; i<maths.length; i++)
+	let grammer = "";
+	 for(let i = 0; i<maths.length; i++)
 	{
 		console.log(maths[i]); 
 		let str = "Zeroes = " + maths[i].zero[0]; 
 		addCard("math",maths[i].equasion,null,str,id)
-	}
+	} 
 	
-	let grammer = getGrammer(text); 
-	console.log(grammer); 
-	updateGrammer(grammer,id); 
+	let grammerNumber = getWordFrequency(text); 
+	console.log(grammerNumber); 
+	//updateGrammer(grammer,id); 
+	let counter = 0; 
+	$( document ).ajaxComplete(function( event, xhr, settings ) {
+		//console.log(settings.url.indexOf('http://thesaurus.altervista.org') != -1);
+		//console.log(settings.url); 
+		if(settings.url.indexOf('http://thesaurus.altervista.org') != -1)
+		{
+			counter++; 
+			
+		}
+		if(counter == grammerNumber)
+		{
+			grammer = getGram(); 
+			console.log(grammer);
+			updateGrammer(grammer,id);
+			
+		}
+}); 
 	
 	
 	
@@ -18,23 +36,23 @@ function checkCards(contents, text,id){
 
 function addCard(type,title,image,text,id){
 	console.log("run");
-	var html = '<div class ="' + type + '" ><h4 class = "title full clickable">' + type.substring(0,1).toUpperCase() + type.substring(1) + '</h4> <h2 class = "title full clickable">' + title + '</h2>';
+	var html = '<div class ="' + type + '" ><h4 class = "title small clickable">' + type.substring(0,1).toUpperCase() + type.substring(1) + '</h4> <h2 class = "title small clickable">' + title + '</h2>';
 	
 	if(type == "grammer")
 	{
-		html += ' <img class = "full clickable" src = "' + image + '"> ';
+		html += ' <img class = "small clickable" src = "' + image + '"> ';
 	}
 	else if (type == "math" && image == null)
 	{
-		html+= '<div class = "image full" id = "empty"> </div> ' ;
+		html+= '<div class = "image small" id = "empty"> </div> ' ;
 	}
 	
-	html += ' <h2 class = "text full clickable">' + text + '</h2></div>';
+	html += ' <h2 class = "text small clickable">' + text + '</h2></div>';
 	
 	if(type == "math")
 	{
 		let len = $(".grammer").length + $(".math").length + $("research").length + 1;
-		html = html.substring(0,html.length - 6) +'<button class="btn full" data-toggle="modal" data-target="#mathModal' + (len) + '"">expand</button>' + html.substring(html.length - 6); 
+		html = html.substring(0,html.length - 6) +'<button class="btn small" data-toggle="modal" data-target="#mathModal' + (len) + '"">expand</button>' + html.substring(html.length - 6); 
 	}
 	
 	
@@ -65,50 +83,66 @@ function handler(){
 
 
 function updateGrammer(grammer,id)
-{	
-	let bool = true; 
-	console.log("hello?",bool); 
-	console.log(grammer.overflowWords)
-	console.log("len = " + grammer.overflowWords.length ); 
-	if(grammer.overflowWords.length > 0){console.log(grammer.overflowWords[0].word)};
+{
+	//start with OverflowWords
+	grammerCards = []; 
 	$(".grammer").each(function(index){
-		bool = false; 
-		console.log("ran?"); 
-	for(let i = 0; i<grammer.overflowWords.length; i++)
-	{
-		if(grammer.overflowWords[i].word + " synonyms" == $(this).find("h2.title").val())
-		{
-			$(this).find(".text").val(synonymTextBuilder(grammer.overflowWords[i]));
-			
-		}
-		else{
-			
-			addCard("grammer",grammer.overflowWords[i].word + " synonyms",'https://www.geddesandgrosset.com/products/13-large.jpg',synonymTextBuilder(grammer.overflowWords[i]),id);
-		}
+		console.log("testing")
+		console.log($(this).find("h2.title").text()); 
+		grammerCards.push($(this)); 
 		
-	}})
-	console.log("hi?",bool); 
-	if(bool)
+	});
+	
+	let overFlow = grammer.overflowWords; 
+	
+	for(let i = 0; i<overFlow.length; i++)
 	{
-		console.log("bool",bool);
-		for(let i = 0; i<grammer.overflowWords.length; i++)
+		for(let j = 0; j<grammerCards.length; j++)
 		{
-			addCard("grammer",grammer.overflowWords[i].word + " synonyms",'https://www.geddesandgrosset.com/products/13-large.jpg',synonymTextBuilder(grammer.overflowWords[i]),id);
+			if(overFlow[i] != 0 && grammerCards[j].find("h2.title").text() == overFlow[i].word + " synonyms")
+			{
+				console.log("stuff and thignss");
+				grammerCards[j].find("h2.text").html(synonymTextBuilder(overFlow[i]));
+				overFlow[i] = 0; 
+				grammerCards[j] == 0; 
+			}				
 		}
-		
+		if(overFlow[i] != 0)
+		{
+			addCard("grammer",overFlow[i].word + " synonyms",'https://www.geddesandgrosset.com/products/13-large.jpg',synonymTextBuilder(overFlow[i]),id);
+		}
+	}	
+	//commas and periods
+	for(let i = 0; i<grammerCards.length; i++)
+	{
+		if(grammerCards[i].find("h2.title").text() == "Commas" || grammerCards[i].find("h2.title").text() == "Periods"){
+			grammerCards[i].remove(); 
+		}
 	}
 	
-	for(let i = 0; i<grammer.underflowComma.length; i++)
+	for(let i = 0; i<grammer.underflowPeriod.length; i++)
 	{
-		//grammer.underflowComma[i]
-		
+		addCard("grammer","Periods",'https://media.tenor.com/images/6f95fb9ab0cffb399bd63797cc3d9af4/tenor.gif',distanceTextBuilder(grammer.underflowPeriod[i],"period"),id);
 	}
-		
+	/* for(let i = 0; i<grammer.underflowComma.length; i++)
+	{
+		addCard("grammer","Commas",'https://brevity.files.wordpress.com/2010/04/comma-splice.jpg',distanceTextBuilder(grammer.underflowComma[i],"comma"),id);
+	} */
+	
+	
+	
 };
 
 var synonymTextBuilder = function(grammer){
 	let synonums = grammer.synonyms[0].split("|"); 
 	let string = "You've used ths world " + grammer.amount + " times try using " + synonums[0] + ", " + synonums[1] + ", and " + synonums[2]; 
+	return string; 
+};
+
+var distanceTextBuilder = function(grammer,type)
+{
+	let distance = grammer.distance; 
+	let string = "You haven't used a " + type + "in " + distance + "chracters, between the words " + grammer.first[0] + " " + grammer.first[1] + " " + grammer.first[2] + " and " + grammer.last[0] + " " + grammer.last[1] + " " + grammer.last[2]
 	return string; 
 };
 
