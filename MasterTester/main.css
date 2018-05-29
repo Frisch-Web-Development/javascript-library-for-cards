@@ -80,10 +80,6 @@ img.small{
    cursor: default;
 }
 
-.annotation{
-	visibility: hidden; 
-}
-
 @keyframes fadeInOpacity {
 	0% {
 		opacity: 0;

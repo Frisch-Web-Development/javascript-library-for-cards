@@ -80,7 +80,7 @@ function onSignIn(googleUser) {
 $(document).ready(function(){
 
 			
-	
+	$("#annotation").hide(0);
 	$('body').on('click', '[data-editable]', function(){
 		  
 		  var $el = $(this);
@@ -96,6 +96,19 @@ $(document).ready(function(){
 		  $input.one('blur', save).focus();
 		  
 		});
+		
+		
+		$("#annotationB").click(function(){
+			console.log("ann"); 
+			$("#annotation").show(200);
+			$("#cards").hide(200); 
+		});
+		$("#cardB").click(function(){
+			console.log("card"); 
+			$("#annotation").hide(200);
+			$("#cards").show(200);
+		});
+			
 	
 	
 	var toolbarOptions = [ 

@@ -126,17 +126,23 @@ var listOfNames = function ()
 {
 	var tooltips = getTooltips(); 
 	var names = []; 
+	var actualNames = []
 	for(let i = 0; i<tooltips.length; i++)
 	{
-		if(!names.includes(tooltips[i].name)){
-		names.push({name: tooltips[i].name, contents: [tooltips[i].content]}); 
+		console.log(names); 
+		console.log(names.includes(tooltips[i].name)); 
+		
+		if(!actualNames.includes(tooltips[i].name)){
+		names.push({name: tooltips[i].name, contents: [tooltips[i].content]});
+		actualNames.push(tooltips[i].name); 
+		console.log("run?"); 
 		}
 		else{
 			for(let j = 0; j<names.length; j++)
 			{
-				if(names[j].name == tooltip[i].name)
+				if(names[j].name == tooltips[i].name)
 				{
-					names[j].contents.push(tooltip[i].content); 
+					names[j].contents.push(tooltips[i].content); 
 				}
 			}
 		}
@@ -150,6 +156,8 @@ function updateAnnotationList()
 	var tooltip = getTooltips(); 
 	var myDiv = $("ul#annotation"); 
 	myDiv.html(""); 
+	console.log(names); 
+	console.log(tooltip); 
 	for(let i = 0; i<names.length; i++)
 	{
 		myDiv.append("<h4>" + names[i].name + "</h4> <ul>");
@@ -160,3 +168,4 @@ function updateAnnotationList()
 		myDiv.append("</ul"); 
 	}
 }
+

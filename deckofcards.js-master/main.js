@@ -1,6 +1,6 @@
 //$(document).ready(function(){addCard("grammer","fuck",'https://www.geddesandgrosset.com/products/13-large.jpg','kh',"cards");addCard("grammer","duck",'https://www.geddesandgrosset.com/products/13-large.jpg','kh',"cards");});
 function checkCards(contents, text,id){
-	/*let maths = findMath(contents); 
+	let maths = findMath(contents); 
 	let grammer = "";
 	 for(let i = 0; i<maths.length; i++)
 	{
@@ -29,8 +29,7 @@ function checkCards(contents, text,id){
 			
 		}
 		
-}); */
-	//getResarch(text,id);
+}); 
 	
 	
 }
