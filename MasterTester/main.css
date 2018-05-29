@@ -67,6 +67,22 @@ img.small{
 	height:8em; 
 }
 
+.hidden{
+	visibility: hidden; 
+}
+.notHidden{
+	visibility: visible; 
+}
+
+
+.inactiveLink {
+   pointer-events: none;
+   cursor: default;
+}
+
+.annotation{
+	visibility: hidden; 
+}
 
 @keyframes fadeInOpacity {
 	0% {

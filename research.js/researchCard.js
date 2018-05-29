@@ -4,17 +4,40 @@ get infobox: {{Infobox\s(.+)\s (get group 1)
 finds all images ^\|\simage.*$ (might want to edit to grab the image name to get the image) 
 
 */
+
+
+
 var myTemp = 0; 
-function getResarch(str) {
-		var info = information("New York City");
+var blacklist = []; 
+var getResarch = function(str,id) {
+		//var info = information("New York City");
 		//let a = '<a href="/wiki/Thanos" title="Thanos">Thanos</a>'.replace(/"\/wiki\/(\w*)"/g,'"https://en.wikipedia.org/wiki/$1'); 
-		console.log(info); 
-		myTemp = info; 
+		//console.log(info); 
+		//myTemp = info; 
+		
+		let regex = /(?<!^)(?<!\. )[A-Z]{1,1}[a-z]+([\s]([A-Z]{1,1}[a-z]+|in|the|of|a|an|nor|but|yet|so))*(?<!(in|the|of|a|an|nor|but|yet|so))/g;
+		let arr = str.match(regex);
+		 if(arr != null){
+			for(let i = 0; i<arr.length; i++)
+			{
+				if(!blacklist.includes(arr[i])){
+					console.log(arr[i]);
+					information(arr[i],id);
+					blacklist.push(arr[i]);
+				}
+			}
+		} 
+		// if(!blacklist.includes("Elon Musk")){
+		// information("Elon Musk",id);
+		// blacklist.push("Elon Musk");}
+		// else if(!blacklist.includes("New York City")){information('New York City',id);}
+		
 
 };
 
-var information = function(search) {
-    var title = "";
+var information = function(search,id) {
+    //console.log(search);
+	var title = "";
     var stuff = "";
 	let possibleTitles = []; 
     $.ajax({
@@ -27,10 +50,11 @@ var information = function(search) {
 		async: false, 
         url: 'https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=' + encodeURIComponent(search)
     }).done(function(result) {
-       // console.log(result); 
+        console.log(result); 
 		possibleTitles = result[1]
         title = determineTitle(search, possibleTitles);
-
+		console.log(title);
+		//if(blacklist.includes(title)){return 0;}
         $.ajax({
             headers: {
                 'Content-Type': "application/javascript",
@@ -40,12 +64,13 @@ var information = function(search) {
 			async: false, 
             dataType: "jsonp",
 			//url: 'https://en.wikipedia.org/api/rest_v1/page/html/' + title
-            url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvlimit=1&format=json&rvprop=content&rvparse=&titles=' + title
+            url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvlimit=1&format=json&rvprop=content&rvparse=&titles=' + encodeURIComponent(title)
         }).done(function(result) {
-           // console.log(Object.keys(result.query.pages)[0]); 
+			//console.log(result);
+            //console.log(Object.keys(result.query.pages)[0]); 
             stuff = result.query.pages[Object.keys(result.query.pages)[0]].revisions["0"]["*"];
 			//console.log(stuff);
-            //console.log(stuff.indexOf('<div class="redirectMsg">')); 
+            console.log(stuff.indexOf('<div class="redirectMsg">')); 
 
             if (stuff.indexOf('<div class="redirectMsg">')!= -1) {
 				let regex = /title="((\w|\s)*)/;
@@ -56,16 +81,28 @@ var information = function(search) {
             }
 			else{
 			stuff = addHttps(stuff); 
-			
-			$("#wikiInfo").append(stuff);
-			//console.log($("table.infobox").html());
-			if($("table.infobox").html() != null){
-			$("#wikiInfo").html($("table.infobox").html());
+			console.log("ran????????????");
+			let name = ""; 
+			if(title.indexOf(" ") != -1)
+			{
+				name = title.substring(0,title.indexOf(" "));
+			}
+			else{
+				name = title; 
+			}
+			$("#"+id).append('<div class = "inactiveLink" id="'+name +'"></div>')
+			$("#"+name).append(stuff);
+			console.log($("#" +name).find("table.infobox").html());
+			if($("#" +name).find("table.infobox").html() != null){
+			$("#"+name).html($("#" +name).find("table.infobox").html());
+			$("#"+name).find("tr").slice(4).wrap('<div class="hidden"></div>');
+			$("#"+name).click(func);
 			console.log("hello"); 
 			}
 			else{
-			$("#wikiInfo").html("No infoBox available"); 
-			information(getNewerTitle(possibleTitles,title,search));
+			$("#"+ name).html("No infoBox available"); 
+			//information(getNewerTitle(possibleTitles,name,search));
+			$("#" + name).remove(); 	
 			
 			}
 			 
@@ -164,4 +201,15 @@ var getNewerTitle = function(array,value,search)
 	}
 	//console.log(NewArray
 	return determineTitle(search,newArray)
+}
+
+
+function func(){
+	console.log("fuck u");
+	if($(this).children().find(".hidden").length > 0){
+	$(this).children().find(".hidden").removeClass('hidden').addClass('notHidden');}
+	else{
+	$(this).children().find(".notHidden").removeClass("notHidden").addClass("hidden");}
+	$(this).off("click");
+	$(this).click(func);		
 }

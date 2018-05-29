@@ -4,6 +4,7 @@ var blob;
 var quill;
 var temp;
 var path;
+var id = "cards";
 /*
 function onSignIn(googleUser) {
     console.log("Success");
@@ -171,8 +172,9 @@ $(document).ready(function(){
 		letters++; 
 //		timer(); 
 		clearInterval(myTimer); 
+		myTimer = setInterval(timer, 100);
 		checkAnnotation(quill.getText(),quill.getContents()); 
-		checkCards(quill.getContents(), quill.getText(),"cards");
+		checkCards(quill.getContents(), quill.getText(),id);
 	});	
 	function timer()  {
 		if(letters > 0) 
@@ -193,6 +195,7 @@ $(document).ready(function(){
 			
 			contents = JSON.stringify(quill.getContents());
 			console.log(contents); 
+			getResarch(quill.getText(), id); 
 		}
 	}
 	function timer2()
