@@ -207,7 +207,7 @@ $(document).ready(function(){
 			});*/
 			
 			contents = JSON.stringify(quill.getContents());
-			console.log(contents); 
+		//	console.log(contents); 
 			getResarch(quill.getText(), id); 
 		}
 	}
@@ -223,7 +223,6 @@ $(document).ready(function(){
 	}
 	
 });
-
 
 function setContent(input)
 {

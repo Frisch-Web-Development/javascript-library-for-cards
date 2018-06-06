@@ -14,7 +14,7 @@ var getResarch = function(str,id) {
 		//let a = '<a href="/wiki/Thanos" title="Thanos">Thanos</a>'.replace(/"\/wiki\/(\w*)"/g,'"https://en.wikipedia.org/wiki/$1'); 
 		//console.log(info); 
 		//myTemp = info; 
-		
+		// (?<!^)(?<!\. ) This was below this at the begginign. 
 		let regex = /(?<!^)(?<!\. )[A-Z]{1,1}[a-z]+([\s]([A-Z]{1,1}[a-z]+|in|the|of|a|an|nor|but|yet|so))*(?<!(in|the|of|a|an|nor|but|yet|so))/g;
 		let arr = str.match(regex);
 		 if(arr != null){

@@ -108,7 +108,22 @@ function renderTooltip()
 				$(this).attr('title',name); 
 			}); 	
 			$(".tool-true").tooltipster({theme: 'tooltipster-noir'});
-	updateAnnotationList(); 		
+			$(".tool-true").off('DOMSubtreeModified');
+			$(".tool-true").off('DOMNodeRemoved');
+			$(".tool-true").on('DOMNodeRemoved',function(){
+				console.log(typeof $(this).attr("class")); 
+				let t = []; 
+				t = $(this).attr("class").split(" ");
+				console.log(t[1].substring(t[1].indexOf("-")+1));
+				
+				updateAnnotationList({name: t[1].substring(t[1].indexOf("-")+1),content:$(this).html() });  
+			});
+		
+		//	console.log("ehh What");
+			$(".tool-true").on('DOMSubtreeModified',function(){
+				updateAnnotationList(null); 
+			}); 
+	updateAnnotationList(null); 		
 	
 }; 
 var getTooltips = function()
@@ -122,7 +137,7 @@ var getTooltips = function()
 }
 
 
-var listOfNames = function () 
+var listOfNames = function (obj) 
 {
 	var tooltips = getTooltips(); 
 	var names = []; 
@@ -147,17 +162,43 @@ var listOfNames = function ()
 			}
 		}
 	}
+	if(obj != null){
+	console.log(obj);
+	for(let i = 0; i<names.length; i++)
+	{
+		if(names[i].name == obj.name)
+		{
+			for(let j = 0; j<names[i].contents.length; j++)
+			{
+				if(names[i].contents[j] == obj.content)
+				{
+					console.log(names[i]);
+					console.log(names[i].contents[j]); 
+					names[i].contents.splice(j,1);
+					console.log(names[i]);
+					j = names[i].contents.length+1; 
+				}
+			}
+			console.log(names[i].contents.length == 0)
+			if(names[i].contents.length == 0)
+			{
+				console.log("RUN NOW");
+				names.splice(i,1);
+			}
+			i = names.length+1; 
+		}
+	}
+	console.log(names);
+	}
 	return names; 
 }
 
-function updateAnnotationList()
+function updateAnnotationList(obj)
 {
-	var names = listOfNames(); 
-	var tooltip = getTooltips(); 
+	var names = listOfNames(obj); 
 	var myDiv = $("ul#annotation"); 
 	myDiv.html(""); 
-	console.log(names); 
-	console.log(tooltip); 
+	console.log(names);  
 	for(let i = 0; i<names.length; i++)
 	{
 		myDiv.append("<h4>" + names[i].name + "</h4> <ul>");

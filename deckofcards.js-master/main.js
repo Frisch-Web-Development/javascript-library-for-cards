@@ -10,7 +10,7 @@ function checkCards(contents, text,id){
 	} 
 	
 	let grammerNumber = getWordFrequency(text); 
-	console.log(grammerNumber); 
+//	console.log(grammerNumber); 
 	//updateGrammer(grammer,id); 
 	let counter = 0; 
 	$( document ).ajaxComplete(function( event, xhr, settings ) {
@@ -30,9 +30,12 @@ function checkCards(contents, text,id){
 		}
 		
 }); 
+
+
 	
 	
 }
+
 
 function addCard(type,title,image,text,id){
 	console.log("run");

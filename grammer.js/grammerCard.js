@@ -22,6 +22,10 @@ var getWordFrequency = function(str)
 	var dict = {};
 	let regex = /\b[a-zA-Z]+'?[a-zA-Z]?\b/g;
 	let array = lStr.match(regex);
+	if(array == null)
+	{
+		return null; 
+	}
 	//if(array == null){return null;}
 //	console.log(array); // array is good
 	var lastWorld = "";
